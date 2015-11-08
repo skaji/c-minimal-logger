@@ -30,6 +30,7 @@ SOFTWARE.
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <assert.h>
 
 #ifndef LOG_DEBUG_ENV_NAME
   #define LOG_DEBUG_ENV_NAME "LOG_DEBUG"
@@ -59,29 +60,30 @@ void logger__(const char* file,
   strftime(time_string, 30, "%Y-%m-%d %H:%M:%S", tmp);
   char line_string[10];
   snprintf(line_string, sizeof line_string, "%d", line);
+#ifdef LOG_PRINT_PID
+  char pid_string[10];
+  snprintf(pid_string, sizeof pid_string, "%d", getpid());
+#endif
   size_t len = strlen(time_string)
              + 2
              + 5
-             + 2
 #ifdef LOG_PRINT_PID
-             + 15
+             + 6
+             + strlen(pid_string)
 #endif
+             + 2
              + strlen(fmt)
              + 4
              + strlen(file)
              + 6
              + strlen(line_string)
              + 1
-             + 1;
+             + 1; // '\0'
   char *str = (char*)malloc(len);
   if (str == NULL) {
     fprintf(stderr, "failed to malloc");
     return;
   }
-#ifdef LOG_PRINT_PID
-  char pid_string[10];
-  snprintf(pid_string, sizeof pid_string, "%d", getpid());
-#endif
   strcpy(str, time_string);
   strcat(str, " [");
   strcat(str, level == 0 ? "DEBUG"
