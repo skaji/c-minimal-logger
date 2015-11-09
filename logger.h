@@ -41,11 +41,11 @@ SOFTWARE.
 #define LOG_WARN(...)  logger__(__FILE__, __LINE__, 2, __VA_ARGS__)
 #define LOG_ERROR(...) logger__(__FILE__, __LINE__, 3, __VA_ARGS__)
 
-void logger__(const char* file,
-              unsigned int line,
-              unsigned int level,
-              const char* fmt,
-              ...)
+static void logger__(const char* file,
+                     unsigned int line,
+                     unsigned int level,
+                     const char* fmt,
+                     ...)
 {
   if (level == 0) {
     char* is_debug = getenv(LOG_DEBUG_ENV_NAME);
